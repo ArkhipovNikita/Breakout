@@ -11,4 +11,3 @@ class Game:
     @property
     def is_ball_go(self):
         return self.__is_ball_go
-    

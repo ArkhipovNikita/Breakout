@@ -2,7 +2,8 @@ import pygame
 import constants as const
 from objects.game_object import GameObject
 from vector2d import Vector2D
-import random 
+import random
+
 
 class Ball(pygame.sprite.Sprite, GameObject):
     def __init__(self, filename, board):
@@ -19,17 +20,17 @@ class Ball(pygame.sprite.Sprite, GameObject):
             self.rect.y = self.board.rect.y - self.radius * 2
         if const.is_ball_go:
             self.__bump_into_wall()
-            self. __bump_into_board()
+            self.__bump_into_board()
             self.rect.y += self.velocity.y
             self.rect.x += self.velocity.x
-    
+
     def __bump_into_wall(self):
         if self.left <= 0 or self.right >= const.width:
             self.velocity.x = -self.velocity.x
         if self.top <= 0:
             self.velocity.y = -self.velocity.y
-    
+
     def __bump_into_board(self):
         if self.rect.colliderect(self.board.rect):
-             self.velocity.y = -self.velocity.y
-             self.velocity.x = random.randint(-self.speed, self.speed)
+            self.velocity.y = -self.velocity.y
+            self.velocity.x = random.randint(-self.speed, self.speed)
