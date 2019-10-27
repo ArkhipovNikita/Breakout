@@ -1,5 +1,6 @@
 import pygame
 
+
 class GameObject:
     def __init__(self, file_path):
         self.image = pygame.image.load(file_path).convert_alpha()
@@ -20,12 +21,11 @@ class GameObject:
     @property
     def bottom(self):
         return self.rect.bottom
-    
+
     @property
     def right(self):
         return self.rect.right
-    
+
     @property
     def left(self):
         return self.rect.left
-    
