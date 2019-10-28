@@ -1,4 +1,11 @@
 class Vector2D:
+    """
+    Class describing 2D vector
+
+    Attributes:
+        x       x-coordinate
+        y       y-coordinate
+    """
     def __init__(self, x, y):
         self.x = x
         self.y = y

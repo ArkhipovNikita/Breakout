@@ -1,21 +1,49 @@
 import pygame
-import constants as const
-from objects.game_object import GameObject
+import random
+from helps import Common, width, height
+from base_classes import *
 
-margin = 10
+class Board(pygame.sprite.Sprite, GameObject, Reflectable):
+    """ 
+    Class describing behavior of board object
+    Class inherits GameObject and Reflectable classes
 
+    Attributes:
+        step        step of moving by key
+    """
 
-class Board(pygame.sprite.Sprite, GameObject):
     def __init__(self, filename):
         pygame.sprite.Sprite.__init__(self)
         GameObject.__init__(self, filename)
-        self.rect.x = const.width / 2 - self.width / 2
-        self.rect.y = const.height - self.height - 15
-        self.step = 12
+        self.rect.x = width / 2 - self.width / 2
+        self.rect.y = height - self.height - 15
+        self.step = 20
 
     def update(self):
+        """ 
+        Update coordinate of a board
+        """
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_RIGHT] and self.rect.x < const.width - margin - self.width:
+        if keys[pygame.K_RIGHT] and self.right + self.step <= width:
             self.rect.x += self.step
-        elif keys[pygame.K_LEFT] and self.rect.x > margin:
+        elif keys[pygame.K_LEFT] and self.left - self.step >= 0 :
             self.rect.x -= self.step
+    
+    def reflect(self, obj: Movable):
+        """ 
+        If obj intersects with a side of a board, obj changes velocity 
+        depending on how many sides obj intersects
+
+        :param obj: Movable object which will be reflected
+        :type obj: Movable
+        """
+        edges = Common.find_side_collision(self, obj)
+        if len(edges) > 1:
+            obj.velocity.y = -obj.velocity.y
+            obj.velocity.x = -obj.velocity.x
+        elif len(edges) == 1:
+            if edges[0] in ('top', 'bottom'):
+                obj.velocity.y = -obj.velocity.y
+                obj.velocity.x = random.randint(-obj.speed, obj.speed)
+            else:
+                obj.velocity.x = random.randint(-obj.speed, obj.speed)

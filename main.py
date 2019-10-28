@@ -1,29 +1,19 @@
 import pygame
-from objects import board, ball
-import constants as const
-from bricks import Bricks
+from objects import *
+import helps.constants as const 
 from score import Score
 
 pygame.init()
 screen = pygame.display.set_mode(const.size)
 clock = pygame.time.Clock()
-board = board.Board('assets/board.png')
-ball = ball.Ball('assets/ball.png', board)
-bricks = Bricks()
-bricks.generate(5)
+
+ball = Ball('assets/ball.png')
+board = Board('assets/board.png')
+bricks = Bricks('assets/bricks/')
+walls = Walls()
 score = Score()
 
-
-# не могу перенести
-def bricks_draw():
-    for i in bricks.bricks:
-        screen.blit(i.image, i.rect)
-
-
-def score_draw():
-    screen.blit(score.text, const.SCORE_PLACE)
-    screen.blit(score.record, const.RECORD_PLACE)
-
+bricks.generate(5)
 
 while True:
     for event in pygame.event.get():
@@ -34,12 +24,17 @@ while True:
                 const.is_ball_go = True
     screen.fill(const.BLACK)
 
-    score_draw()
-    bricks_draw()
-    bricks.find_brick(10, 125)
-    screen.blit(board.image, board.rect)
-    screen.blit(ball.image, ball.rect)
     board.update()
-    ball.update()
+    ball.update(board)
+
+    board.reflect(ball)
+    bricks.reflect(ball)
+    walls.reflect(ball)
+
+    board.draw(screen)
+    ball.draw(screen)
+    bricks.draw(screen)
+    score.draw(screen)
+
     pygame.display.update()
     clock.tick(const.FPS)

@@ -5,6 +5,6 @@ BLACK = (0, 0, 0)
 FONT_COLOR = (255, 255, 255)
 SCORE_PLACE = (0, 2)
 RECORD_PLACE = (450, 2)
-FPS = 30
+FPS = 120
 is_ball_go = False
 points = 5

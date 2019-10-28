@@ -1,6 +1,5 @@
 import pygame
-from constants import points
-from constants import FONT_COLOR
+from helps import constants as const
 from pygame.locals import *
 
 # from player import nickname
@@ -16,8 +15,8 @@ class Score:
         self.path = "top_plays.txt"
         self.local_score = 0
         self.scores = self.__plays__()[:-1]
-        self.text = font_renderer.render("Score: " + str(self.local_score), 1, FONT_COLOR)
-        self.record = font_renderer.render("Leader: " + str(self.scores[0][1]), 1, FONT_COLOR)
+        self.text = font_renderer.render("Score: " + str(self.local_score), 1, const.FONT_COLOR)
+        self.record = font_renderer.render("Leader: " + str(self.scores[0][1]), 1, const.FONT_COLOR)
 
     def __plays__(self):
         """
@@ -37,9 +36,13 @@ class Score:
             file.write(i[0] + " " + str(i[1]) + "\n")
         self.local_score = 0
 
+    def draw(self, screen):
+        screen.blit(self.text, const.SCORE_PLACE)
+        screen.blit(self.record, const.RECORD_PLACE)
+    
     def increment_score(self):
         """
         Increment player score by points from constants
         """
-        self.local_score += points
-        self.text = font_renderer.render("Score: " + str(self.local_score), 1, FONT_COLOR)
+        self.local_score += const.points
+        self.text = font_renderer.render("Score: " + str(self.local_score), 1, const.FONT_COLOR)

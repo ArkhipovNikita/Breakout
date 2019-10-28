@@ -1,13 +1,13 @@
 import pygame
-from objects.game_object import GameObject
+from base_classes.game_object import GameObject
 
 
 class Brick(pygame.sprite.Sprite, GameObject):
     """
-    Break class - one unit to destroy
-    rect[x, y]    coordinates
+    Brick class - one unit to destroy
+    Class inherits GameObject class
     """
     def __init__(self, filename, x, y):
         pygame.sprite.Sprite.__init__(self)
         GameObject.__init__(self, filename)
-        self.rect = [x, y]
+        self.rect = pygame.Rect(x, y, self.width, self.height)
