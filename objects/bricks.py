@@ -19,12 +19,13 @@ class Bricks:
           start point  start point of generation
     """
     
-    def __init__(self, path):
+    def __init__(self, path, score):
         self.bricks = pygame.sprite.Group()
         self.start_point = 25
         self.path = path
         self.images = os.listdir(self.path)
         self.destroy_sound = pygame.mixer.Sound('assets/sound/destroy_brick.wav')
+        self.score = score
 
     def find_bricks_colls(self, obj: GameObject):
         """
@@ -39,7 +40,9 @@ class Bricks:
         ball = pygame.sprite.Group()
         ball.add(obj)
         res = pygame.sprite.groupcollide(self.bricks, ball, True, False)
-        for i in range(len(res)):   self.destroy_sound.play()
+        for i in range(len(res)):   
+            self.destroy_sound.play()
+            self.score.increment_score()
         return [key for key, val in res.items()]
     
     def draw(self, screen):
@@ -58,6 +61,6 @@ class Bricks:
             x = 0
             for j in range(line_limit):
                 if random.randint(0, 4) != 2:
-                    self.bricks.add(Brick(self.path + str(random.choice(self.images)), x, y))
+                    self.bricks.add(Brick(os.path.join(self.path, str(random.choice(self.images))), x, y))
                 x += brick_size[0]
             y += brick_size[1]

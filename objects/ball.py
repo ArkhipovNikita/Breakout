@@ -29,7 +29,7 @@ class Ball(pygame.sprite.Sprite, GameObject):
         self.bricks = bricks
     
 
-    def update(self):
+    def update(self, is_ball_go):
         """ 
         Update coordinate of a ball
             Until key space isn't pressed, the ball will follow for board
@@ -38,10 +38,10 @@ class Ball(pygame.sprite.Sprite, GameObject):
         :param board: a bord that is followed by ball
         :type board: Board
         """
-        if not const.is_ball_go:
+        if not is_ball_go:
             self.rect.x = self.board.rect.x + self.board.width / 2 - self.radius
             self.rect.y = self.board.rect.y - self.radius * 2
-        if const.is_ball_go:
+        if is_ball_go:
             self.__bump_into_walls()
             self.__bump_into_board()
             self.__bump_into_bricks()
