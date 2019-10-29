@@ -3,10 +3,10 @@ import random
 from helps import Common, width, height
 from base_classes import *
 
-class Board(pygame.sprite.Sprite, GameObject, Reflectable):
+class Board(pygame.sprite.Sprite, GameObject):
     """ 
     Class describing behavior of board object
-    Class inherits GameObject and Reflectable classes
+    Class inherits GameObject class
 
     Attributes:
         step        step of moving by key
@@ -28,23 +28,3 @@ class Board(pygame.sprite.Sprite, GameObject, Reflectable):
             self.rect.x += self.step
         elif keys[pygame.K_LEFT] and self.left - self.step >= 0 :
             self.rect.x -= self.step
-    
-    def reflect(self, obj: Movable):
-        """ 
-        If obj intersects with a side of a board, obj changes velocity 
-        depending on how many sides obj intersects
-
-        :param obj: Movable object which will be reflected
-        :type obj: Movable
-        """
-        if self.rect.colliderect(obj.rect):
-            edges = Common.find_side_collision(self, obj)
-            if len(edges) > 1:
-                obj.velocity.y = -obj.velocity.y
-                obj.velocity.x = -obj.velocity.x
-            elif len(edges) == 1:
-                if edges[0] in ('top', 'bottom'):
-                    obj.velocity.y = -obj.velocity.y
-                    obj.velocity.x = random.randint(-obj.speed, obj.speed)
-                else:
-                    obj.velocity.x = random.randint(-obj.speed, obj.speed)

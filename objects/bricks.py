@@ -3,15 +3,14 @@ import random
 import os
 from helps import Common, line_limit, brick_size
 from objects.brick import Brick
-from base_classes import Movable, Reflectable, GameObject
+from base_classes import GameObject
 
 pygame.mixer.init()
 
 
-class Bricks(Reflectable):
+class Bricks:
     """
     Class containing bricks
-    Class inherits Reflectable class
 
     Attributes:
           bricks       list of bricks
@@ -27,7 +26,7 @@ class Bricks(Reflectable):
         self.images = os.listdir(self.path)
         self.destroy_sound = pygame.mixer.Sound('assets/sound/destroy_brick.wav')
 
-    def __find_bricks(self, obj: GameObject):
+    def find_bricks_colls(self, obj: GameObject):
         """
         Find all bricks that are intersected by obj
         Play sound effect if obj intersects a brick
@@ -43,47 +42,6 @@ class Bricks(Reflectable):
         for i in range(len(res)):   self.destroy_sound.play()
         return [key for key, val in res.items()]
     
-    # может где-то есть ошибка, поэтому появлются баги типа удаления кирпича без отражения
-    # или проход сквозь кирпич через угол
-    def reflect(self, obj: Movable):
-        """
-        Change velocity of a obj if it intersects bricks
-        Type of chanhing velocity depends on how many bricks and their edges obj intersects
-
-        :param obj: Movable object
-        :type obj: Movable
-        """
-        colls = self.__find_bricks(obj)
-        # one brick
-        if len(colls) == 1:
-            edges = Common.find_side_collision(colls[0], obj)
-            # two edges means intersection with angle of a brick
-            if len(edges) > 1:
-                obj.velocity.y = -obj.velocity.y
-                obj.velocity.x = -obj.velocity.x
-            # one edge means intersection with one side
-            elif len(edges) == 1:
-                if edges[0] in ('top', 'bottom'):
-                    obj.velocity.y = -obj.velocity.y
-                else:
-                    obj.velocity.x = -obj.velocity.x
-        # more than one brick (must be two)
-        elif len(colls) > 1:
-            try:
-                edge1 = Common.find_side_collision(colls[0], obj)[0]
-                edge2 = Common.find_side_collision(colls[1], obj)[0]
-                comb1 = ('top', 'bottom')
-                comb2 = ('right', 'left')
-                # intersection with bricks that are situated on one y-position
-                if edge1 in comb1 and edge2 in comb2:
-                    obj.velocity.y = -obj.velocity.y
-                # intersection with bricks which are situated on different y-position
-                else:
-                    obj.velocity.y = -obj.velocity.y
-                    obj.velocity.x = -obj.velocity.x
-            except: 
-                print('По какой-то причине нет ребра столкновения')
-
     def draw(self, screen):
         for e in self.bricks:
             e.draw(screen)

@@ -7,10 +7,9 @@ pygame.init()
 screen = pygame.display.set_mode(const.size)
 clock = pygame.time.Clock()
 
-ball = Ball('assets/ball.png')
 board = Board('assets/board.png')
 bricks = Bricks('assets/bricks/')
-walls = Walls()
+ball = Ball('assets/ball.png', board, bricks)
 score = Score()
 
 bricks.generate(5)
@@ -25,11 +24,7 @@ while True:
     screen.fill(const.BLACK)
 
     board.update()
-    ball.update(board)
-
-    board.reflect(ball)
-    walls.reflect(ball)
-    bricks.reflect(ball)
+    ball.update()
 
     board.draw(screen)
     ball.draw(screen)
