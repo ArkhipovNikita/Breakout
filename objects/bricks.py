@@ -21,13 +21,13 @@ class Bricks(Reflectable):
     """
     
     def __init__(self, path):
-        self.bricks = []
+        self.bricks = pygame.sprite.Group()
         self.start_point = 25
         self.path = path
         self.images = os.listdir(self.path)
         self.destroy_sound = pygame.mixer.Sound('assets/sound/destroy_brick.wav')
 
-    def __find_brick(self, obj: GameObject):
+    def __find_bricks(self, obj: GameObject):
         """
         Find all bricks that are intersected by obj
         Play sound effect if obj intersects a brick
@@ -37,20 +37,11 @@ class Bricks(Reflectable):
 
         :return: list of intersected bricks
         """
-        colls = []
-        length = len(self.bricks)
-        i = 0
-        while i < length:
-            brick = self.bricks[i]
-            check = max(brick.right, obj.left) == brick.right and max(brick.left, obj.right) == obj.right and \
-                max(brick.top, obj.bottom) == obj.bottom and max(brick.bottom, obj.top) == brick.bottom
-            if check:
-                self.destroy_sound.play()
-                cur_brick = self.bricks.pop(i)
-                length -= 1
-                colls.append(cur_brick)
-            i += 1
-        return colls
+        ball = pygame.sprite.Group()
+        ball.add(obj)
+        res = pygame.sprite.groupcollide(self.bricks, ball, True, False)
+        for i in range(len(res)):   self.destroy_sound.play()
+        return [key for key, val in res.items()]
     
     # может где-то есть ошибка, поэтому появлются баги типа удаления кирпича без отражения
     # или проход сквозь кирпич через угол
@@ -62,7 +53,7 @@ class Bricks(Reflectable):
         :param obj: Movable object
         :type obj: Movable
         """
-        colls = self.__find_brick(obj)
+        colls = self.__find_bricks(obj)
         # one brick
         if len(colls) == 1:
             edges = Common.find_side_collision(colls[0], obj)
@@ -109,6 +100,6 @@ class Bricks(Reflectable):
             x = 0
             for j in range(line_limit):
                 if random.randint(0, 4) != 2:
-                    self.bricks.append(Brick(self.path + str(random.choice(self.images)), x, y))
+                    self.bricks.add(Brick(self.path + str(random.choice(self.images)), x, y))
                 x += brick_size[0]
             y += brick_size[1]

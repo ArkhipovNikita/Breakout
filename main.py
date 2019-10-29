@@ -28,8 +28,8 @@ while True:
     ball.update(board)
 
     board.reflect(ball)
-    bricks.reflect(ball)
     walls.reflect(ball)
+    bricks.reflect(ball)
 
     board.draw(screen)
     ball.draw(screen)

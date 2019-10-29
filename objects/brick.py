@@ -8,6 +8,6 @@ class Brick(pygame.sprite.Sprite, GameObject):
     Class inherits GameObject class
     """
     def __init__(self, filename, x, y):
-        pygame.sprite.Sprite.__init__(self)
         GameObject.__init__(self, filename)
+        pygame.sprite.Sprite.__init__(self)
         self.rect = pygame.Rect(x, y, self.width, self.height)

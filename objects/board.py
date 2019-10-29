@@ -37,13 +37,14 @@ class Board(pygame.sprite.Sprite, GameObject, Reflectable):
         :param obj: Movable object which will be reflected
         :type obj: Movable
         """
-        edges = Common.find_side_collision(self, obj)
-        if len(edges) > 1:
-            obj.velocity.y = -obj.velocity.y
-            obj.velocity.x = -obj.velocity.x
-        elif len(edges) == 1:
-            if edges[0] in ('top', 'bottom'):
+        if self.rect.colliderect(obj.rect):
+            edges = Common.find_side_collision(self, obj)
+            if len(edges) > 1:
                 obj.velocity.y = -obj.velocity.y
-                obj.velocity.x = random.randint(-obj.speed, obj.speed)
-            else:
-                obj.velocity.x = random.randint(-obj.speed, obj.speed)
+                obj.velocity.x = -obj.velocity.x
+            elif len(edges) == 1:
+                if edges[0] in ('top', 'bottom'):
+                    obj.velocity.y = -obj.velocity.y
+                    obj.velocity.x = random.randint(-obj.speed, obj.speed)
+                else:
+                    obj.velocity.x = random.randint(-obj.speed, obj.speed)
