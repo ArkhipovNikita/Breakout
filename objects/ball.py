@@ -23,7 +23,7 @@ class Ball(pygame.sprite.Sprite, GameObject):
         pygame.sprite.Sprite.__init__(self)
         GameObject.__init__(self, filename)
         self.radius = self.width / 2
-        self.speed = 15
+        self.speed = 10
         self.velocity = Vector2D(random.randint(-self.speed, self.speed), -self.speed)
         self.board = board
         self.bricks = bricks

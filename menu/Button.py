@@ -25,3 +25,6 @@ class Button(pygame.sprite.Sprite):
         :return: False if mouse doesn't intersect 
         """
         return self.rect.collidepoint(mouse_pos)
+
+    def draw(self, screen):
+        screen.blit(self.image, self.rect)

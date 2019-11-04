@@ -7,3 +7,4 @@ class ButtonType(enum.Enum):
     Start = 0
     Records = 1
     Quit = 2
+    Back = 3

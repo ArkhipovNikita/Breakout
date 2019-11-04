@@ -16,10 +16,10 @@ class Game:
         bricks
         ball
     """
-    def __init__(self, screen):
+    def __init__(self, screen, score):
         self.screen = screen
         self.clock = pygame.time.Clock()
-        self.score = Score()
+        self.score = score
         self.board = Board('assets/board.png')
         self.bricks = Bricks('assets/bricks/', self.score)
         self.ball = Ball('assets/ball.png', self.board, self.bricks)

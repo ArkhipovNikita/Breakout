@@ -8,14 +8,15 @@ from game import Game
 pygame.init()
 screen = pygame.display.set_mode(const.size)
 
+score = Score()
+
 while True:
     menu = Menu(screen)
     btn = menu.menu_loop()
     if btn == ButtonType.Start:
-        game = Game(screen)
+        game = Game(screen, score)
         game.game_loop()
     elif btn == ButtonType.Records:
-        # дописать
-        pass
+        score.records_loop(screen)
     else:
         exit()

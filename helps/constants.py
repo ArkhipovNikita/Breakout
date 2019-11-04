@@ -6,5 +6,5 @@ BLACK = (0, 0, 0)
 FONT_COLOR = (255, 255, 255)
 SCORE_PLACE = (0, 2)
 RECORD_PLACE = (450, 2)
-FPS = 60
+FPS = 120
 points = 5

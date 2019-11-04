@@ -21,7 +21,7 @@ class Menu:
         Initialize the attribute btns
         """
         btns_name_list = [ButtonType.Start, ButtonType.Records, ButtonType.Quit]
-        path = 'assets/buttons'
+        path = 'assets/buttons/menu'
         images = os.listdir(path)
         images.sort()
         start_y = 100
