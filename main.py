@@ -6,8 +6,10 @@ from score import Score
 from game import Game
 
 pygame.init()
+pygame.mixer.init()
+pygame.mixer.music.load('assets/sound/back.wav')
+pygame.mixer.music.play(loops=-1)
 screen = pygame.display.set_mode(const.size)
-
 score = Score()
 
 while True:
@@ -19,4 +21,5 @@ while True:
     elif btn == ButtonType.Records:
         score.records_loop(screen)
     else:
+        pygame.mixer.quit()
         exit()

@@ -24,10 +24,11 @@ class Ball(pygame.sprite.Sprite, GameObject):
         GameObject.__init__(self, filename)
         self.filename = filename
         self.radius = self.width / 2
-        self.speed = 10
+        self.speed = 12
         self.velocity = Vector2D(random.randint(-self.speed, self.speed), -self.speed)
         self.board = board
         self.bricks = bricks
+        self.coll_sound = pygame.mixer.Sound('assets/sound/coll_with_board.wav')
 
     def update(self, is_ball_go):
         """ 
@@ -66,6 +67,7 @@ class Ball(pygame.sprite.Sprite, GameObject):
                      self.velocity.x = random.randint(-self.speed, self.speed)
             elif edges in (Sides.Right, Sides.Left):
                 self.velocity.x = -self.velocity.x
+            self.coll_sound.play()
 
     # иногда мяч застревает в боковой стене
     def __bump_into_walls(self, ahead_ball):
@@ -74,8 +76,10 @@ class Ball(pygame.sprite.Sprite, GameObject):
         """
         if ahead_ball.left <= 0 or ahead_ball.right >= const.width:
             self.velocity.x = -self.velocity.x
+            self.coll_sound.play()
         if self.top <= 0:
            self.velocity.y = -self.velocity.y
+           self.coll_sound.play()
 
     def __give_ahead_ball(self):
         ball_ahead = Ball(self.filename, self.board, self.bricks)

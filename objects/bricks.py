@@ -5,8 +5,6 @@ from helps import Common, line_limit, brick_size
 from objects.brick import Brick
 from base_classes import GameObject
 
-pygame.mixer.init()
-
 
 class Bricks:
     """
@@ -50,11 +48,6 @@ class Bricks:
             if bricks[0].left == bricks[1].left:
                 return [key for key in bricks if obj.center[1] >= key.top and obj.center[1] <= key.bottom]
         return bricks
-    
-    def delete_bricks(self, bricks: list):
-        for i in range(len(bricks)):   
-            self.destroy_sound.play()
-            self.score.increment_score()
             
     def draw(self, screen):
         for e in self.bricks:
