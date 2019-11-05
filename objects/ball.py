@@ -1,5 +1,6 @@
 import pygame
 import random
+import math
 from helps import constants as const
 from helps import Common, Vector2D, Sides
 from base_classes import * 
@@ -24,8 +25,10 @@ class Ball(pygame.sprite.Sprite, GameObject):
         GameObject.__init__(self, filename)
         self.filename = filename
         self.radius = self.width / 2
-        self.speed = 12
-        self.velocity = Vector2D(random.randint(-self.speed, self.speed), -self.speed)
+        self.speed = 8
+        x = random.random()
+        y = math.sqrt(1 - x * x)
+        self.velocity = Vector2D(x, y)
         self.board = board
         self.bricks = bricks
         self.coll_sound = pygame.mixer.Sound('assets/sound/coll_with_board.wav')
@@ -47,8 +50,8 @@ class Ball(pygame.sprite.Sprite, GameObject):
             self.__bump_into_walls(ahead_ball)
             self.__bump_into_board(ahead_ball)
             self.__bump_into_bricks(ahead_ball)
-            self.rect.y += self.velocity.y
-            self.rect.x += self.velocity.x
+            self.rect.y += self.velocity.y * self.speed
+            self.rect.x += self.velocity.x * self.speed
 
     def __bump_into_board(self, ahead_ball):
         """ 
@@ -64,7 +67,7 @@ class Ball(pygame.sprite.Sprite, GameObject):
                 if edges in (Sides.Right, Sides.Left):
                     self.velocity.x = -self.velocity.x
                 else:
-                     self.velocity.x = random.randint(-self.speed, self.speed)
+                     self.velocity.x = random.random()
             elif edges in (Sides.Right, Sides.Left):
                 self.velocity.x = -self.velocity.x
             self.coll_sound.play()
@@ -82,6 +85,9 @@ class Ball(pygame.sprite.Sprite, GameObject):
            self.coll_sound.play()
 
     def __give_ahead_ball(self):
+        """
+        Give a ball is ahead by one step
+        """
         ball_ahead = Ball(self.filename, self.board, self.bricks)
         ball_ahead.rect.x, ball_ahead.rect.y = self.rect.x, self.rect.y
         ball_ahead.rect.x += self.velocity.x
@@ -93,9 +99,10 @@ class Ball(pygame.sprite.Sprite, GameObject):
         Change velocity of a obj if it intersects bricks
         Type of chanhing velocity depends on how many bricks and their edges obj intersects
         """
-        colls = self.bricks.find_bricks_colls(ahead_ball)
+        colls = self.bricks.find_bricks_colls(ahead_ball, self)
+        length = len(colls)
         # one brick
-        if len(colls) == 1:
+        if length == 1:
             edges = Common.find_side_collision(colls[0], ahead_ball)
             # two edges means intersection with angle of a brick
             if len(edges) > 1:
@@ -108,7 +115,7 @@ class Ball(pygame.sprite.Sprite, GameObject):
                 else:
                     self.velocity.x = -self.velocity.x
         # more than one brick (must be two)
-        elif len(colls) > 1:
+        elif length > 1:
             edge1 = Common.find_side_collision(colls[0], ahead_ball)[0]
             edge2 = Common.find_side_collision(colls[1], ahead_ball)[0]
             comb1 = (Sides.Top, Sides.Bottom)

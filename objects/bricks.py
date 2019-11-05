@@ -1,7 +1,7 @@
 import pygame
 import random
 import os
-from helps import Common, line_limit, brick_size
+from helps import Common, line_limit, brick_size, Vector2D
 from objects.brick import Brick
 from base_classes import GameObject
 
@@ -26,27 +26,35 @@ class Bricks:
         self.destroy_sound = pygame.mixer.Sound('assets/sound/destroy_brick.wav')
         self.score = score
 
-    def find_bricks_colls(self, obj: GameObject):
+    def find_bricks_colls(self, obj: GameObject, real_ball):
         """
         Find all bricks that are intersected by obj
         Play sound effect if obj intersects a brick
+        Add a new line every 8 destroying bricks
 
         :param obj: the game object which may intersect the bricks
+        :param real_ball: the ball is on the map 
         :type obj: GameObject
 
-        :return: list of intersected bricks
+        :return: list of intersecting bricks
         """
         ball = pygame.sprite.Group()
         ball.add(obj)
         res = pygame.sprite.groupcollide(self.bricks, ball, True, False)
-        bricks = [key for key, val in res.items()]
+        bricks = list(res.keys())
         for i in range(len(res)):
             self.destroy_sound.play()
             self.score.increment_score()
             self.count += 1
+
+        # change speed of the real ball
+        if self.count >= 8:
+            real_ball.speed += 2
+
+        # adding new bricks
         self.generate(self.count // 8)
         self.count %= 8
-        if len(res) > 1:
+        if len(bricks) > 1:
             if bricks[0].bottom == bricks[1].bottom:
                 return [key for key in bricks if obj.center[0] >= key.left and obj.center[0] <= key.right]
             if bricks[0].left == bricks[1].left:
