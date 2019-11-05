@@ -1,7 +1,7 @@
 import pygame
 import random
 from helps import constants as const
-from helps import Common, Vector2D
+from helps import Common, Vector2D, Sides
 from base_classes import * 
 from objects.board import Board
 from objects.bricks import Bricks
@@ -22,12 +22,13 @@ class Ball(pygame.sprite.Sprite, GameObject):
     def __init__(self, filename, board: Board, bricks: Bricks):
         pygame.sprite.Sprite.__init__(self)
         GameObject.__init__(self, filename)
+        self.filename = filename
         self.radius = self.width / 2
-        self.speed = 15
+        self.speed = 12
         self.velocity = Vector2D(random.randint(-self.speed, self.speed), -self.speed)
         self.board = board
         self.bricks = bricks
-    
+        self.coll_sound = pygame.mixer.Sound('assets/sound/coll_with_board.wav')
 
     def update(self, is_ball_go):
         """ 
@@ -42,65 +43,76 @@ class Ball(pygame.sprite.Sprite, GameObject):
             self.rect.x = self.board.rect.x + self.board.width / 2 - self.radius
             self.rect.y = self.board.rect.y - self.radius * 2
         if is_ball_go:
-            self.__bump_into_walls()
-            self.__bump_into_board()
-            self.__bump_into_bricks()
+            ahead_ball = self.__give_ahead_ball()
+            self.__bump_into_walls(ahead_ball)
+            self.__bump_into_board(ahead_ball)
+            self.__bump_into_bricks(ahead_ball)
             self.rect.y += self.velocity.y
             self.rect.x += self.velocity.x
 
-    def __bump_into_board(self):
+    def __bump_into_board(self, ahead_ball):
         """ 
         If obj intersects with a side of a board, velocity of ball is changed
         depending on how many sides obj intersects
         """
         # is there intersection
-        if self.rect.colliderect(self.board.rect):
+        if ahead_ball.rect.colliderect(self.board.rect):
             edges = Common.find_side_collision(self.board, self)
-            if 'top' in edges:
+            if Sides.Top in edges:
                 self.velocity.y = -self.velocity.y
                 # angle
-                if 'right' in edges or 'left' in edges:
+                if edges in (Sides.Right, Sides.Left):
                     self.velocity.x = -self.velocity.x
                 else:
                      self.velocity.x = random.randint(-self.speed, self.speed)
-            elif 'right' in edges or 'left' in edges:
+            elif edges in (Sides.Right, Sides.Left):
                 self.velocity.x = -self.velocity.x
+            self.coll_sound.play()
 
     # иногда мяч застревает в боковой стене
-    def __bump_into_walls(self):
+    def __bump_into_walls(self, ahead_ball):
         """ 
         If a ball intersects with walls apart from bottom wall, velocity of the ball will change 
         """
-        if self.left <= 0 or self.right >= const.width:
+        if ahead_ball.left <= 0 or ahead_ball.right >= const.width:
             self.velocity.x = -self.velocity.x
+            self.coll_sound.play()
         if self.top <= 0:
            self.velocity.y = -self.velocity.y
+           self.coll_sound.play()
 
-    def __bump_into_bricks(self):
+    def __give_ahead_ball(self):
+        ball_ahead = Ball(self.filename, self.board, self.bricks)
+        ball_ahead.rect.x, ball_ahead.rect.y = self.rect.x, self.rect.y
+        ball_ahead.rect.x += self.velocity.x
+        ball_ahead.rect.y += self.velocity.y
+        return ball_ahead
+
+    def __bump_into_bricks(self, ahead_ball):
         """
         Change velocity of a obj if it intersects bricks
         Type of chanhing velocity depends on how many bricks and their edges obj intersects
         """
-        colls = self.bricks.find_bricks_colls(self)
+        colls = self.bricks.find_bricks_colls(ahead_ball)
         # one brick
         if len(colls) == 1:
-            edges = Common.find_side_collision(colls[0], self)
+            edges = Common.find_side_collision(colls[0], ahead_ball)
             # two edges means intersection with angle of a brick
             if len(edges) > 1:
                 self.velocity.y = -self.velocity.y
                 self.velocity.x = -self.velocity.x
             # one edge means intersection with one side
             elif len(edges) == 1:
-                if edges[0] in ('top', 'bottom'):
+                if edges[0] in (Sides.Top, Sides.Bottom):
                     self.velocity.y = -self.velocity.y
                 else:
                     self.velocity.x = -self.velocity.x
         # more than one brick (must be two)
         elif len(colls) > 1:
-            edge1 = Common.find_side_collision(colls[0], self)[0]
-            edge2 = Common.find_side_collision(colls[1], self)[0]
-            comb1 = ('top', 'bottom')
-            comb2 = ('right', 'left')
+            edge1 = Common.find_side_collision(colls[0], ahead_ball)[0]
+            edge2 = Common.find_side_collision(colls[1], ahead_ball)[0]
+            comb1 = (Sides.Top, Sides.Bottom)
+            comb2 = (Sides.Right, Sides.Left)
             # intersection with bricks that are situated on one y-position
             if edge1 in comb1 and edge2 in comb1:
             # if edge1 in comb1 and edge2 in comb1:

@@ -5,8 +5,6 @@ from helps import Common, line_limit, brick_size
 from objects.brick import Brick
 from base_classes import GameObject
 
-pygame.mixer.init()
-
 
 class Bricks:
     """
@@ -41,14 +39,20 @@ class Bricks:
         ball = pygame.sprite.Group()
         ball.add(obj)
         res = pygame.sprite.groupcollide(self.bricks, ball, True, False)
+        bricks = [key for key, val in res.items()]
         for i in range(len(res)):
             self.destroy_sound.play()
             self.score.increment_score()
             self.count += 1
         self.generate(self.count // 8)
         self.count %= 8
-        return [key for key, val in res.items()]
-
+        if len(res) > 1:
+            if bricks[0].bottom == bricks[1].bottom:
+                return [key for key in bricks if obj.center[0] >= key.left and obj.center[0] <= key.right]
+            if bricks[0].left == bricks[1].left:
+                return [key for key in bricks if obj.center[1] >= key.top and obj.center[1] <= key.bottom]
+        return bricks
+      
     def draw(self, screen):
         for e in self.bricks:
             e.draw(screen)

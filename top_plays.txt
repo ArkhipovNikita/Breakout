@@ -1,6 +1,10 @@
-qwerty 25
-qwerty 5
-qwerty 5
-qwerty 5
-asdadsda 3
-asdasdass 2
+player 145
+qwerty 140
+qwerty 140
+qwerty 125
+player 125
+player 105
+player 70
+player 65
+player 20
+player 20
