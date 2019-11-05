@@ -6,27 +6,21 @@ from menu import Button, ButtonType
 # from player import nickname
 nickname = "player"
 
-pygame.font.init()
-default_font = pygame.font.get_default_font()
-font_renderer = pygame.font.Font(default_font, 25)
-
-
 class Score:
     def __init__(self):
         self.path = "top_plays.txt"
         self.local_score = 0
         self.scores = self.__plays__()[:-1]
-        self.text = font_renderer.render("Score: " + str(self.local_score), 1, const.FONT_COLOR)
-        self.record = font_renderer.render("Leader: " + str(self.scores[0][1]), 1, const.FONT_COLOR)
+        self.text = const.font_renderer.render("Score: " + str(self.local_score), 1, const.FONT_COLOR)
+        self.record = const.font_renderer.render("Leader: " + str(self.scores[0][1]), 1, const.FONT_COLOR)
 
     def __plays__(self):
         """
         Read file with leader board and return list of them
         :return: list of scores from leader board
         """
-        return [s.split(" ") for s in open(self.path).read().split("\n") if s]
+        return [s.split(" ") for i, s in enumerate(open(self.path).read().split("\n")) if s and i < 15]
 
-    # Сделать так, чтобы записей было не больше 15
     def save(self):
         """
         Save the leader board in sorted order
@@ -40,7 +34,7 @@ class Score:
 
     def draw(self, screen):
         screen.blit(self.text, const.SCORE_PLACE)
-        screen.blit(self.record, const.RECORD_PLACE)
+        screen.blit(self.record, (const.width / 2 - self.record.get_width() / 2, 2))
     
     def records_loop(self, screen):
         """ 
@@ -66,8 +60,8 @@ class Score:
             btn.draw(screen)
             y = y_step
             for record in records:
-                nick = font_renderer.render(str(record[0]), 1, const.FONT_COLOR)
-                num = font_renderer.render(str(record[1]), 1, const.FONT_COLOR)
+                nick = const.font_renderer.render(str(record[0]), 1, const.FONT_COLOR)
+                num = const.font_renderer.render(str(record[1]), 1, const.FONT_COLOR)
                 screen.blit(nick, (100, y))
                 screen.blit(num, (const.width - 100 - num.get_width(), y))
                 y += y_step
@@ -79,4 +73,4 @@ class Score:
         Increment player score by points from constants
         """
         self.local_score += const.points
-        self.text = font_renderer.render("Score: " + str(self.local_score), 1, const.FONT_COLOR)
+        self.text = const.font_renderer.render("Score: " + str(self.local_score), 1, const.FONT_COLOR)

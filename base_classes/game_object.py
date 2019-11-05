@@ -46,6 +46,11 @@ class GameObject:
     def left(self):
         """ left bound of object """
         return self.rect.left
+    
+    @abstractproperty
+    def center(self):
+        """ center point of object """
+        return self.rect.center
         
     @abstractmethod
     def draw(self, screen):

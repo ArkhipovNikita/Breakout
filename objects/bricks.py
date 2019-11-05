@@ -40,11 +40,22 @@ class Bricks:
         ball = pygame.sprite.Group()
         ball.add(obj)
         res = pygame.sprite.groupcollide(self.bricks, ball, True, False)
-        for i in range(len(res)):   
+        bricks = [key for key, val in res.items()]
+        for i in range(len(bricks)):   
             self.destroy_sound.play()
             self.score.increment_score()
-        return [key for key, val in res.items()]
+        if len(res) > 1:
+            if bricks[0].bottom == bricks[1].bottom:
+                return [key for key in bricks if obj.center[0] >= key.left and obj.center[0] <= key.right]
+            if bricks[0].left == bricks[1].left:
+                return [key for key in bricks if obj.center[1] >= key.top and obj.center[1] <= key.bottom]
+        return bricks
     
+    def delete_bricks(self, bricks: list):
+        for i in range(len(bricks)):   
+            self.destroy_sound.play()
+            self.score.increment_score()
+            
     def draw(self, screen):
         for e in self.bricks:
             e.draw(screen)

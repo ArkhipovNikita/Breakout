@@ -1,4 +1,10 @@
+player 145
 qwerty 140
 qwerty 140
 qwerty 125
-qwerty 80
+player 125
+player 105
+player 70
+player 65
+player 20
+player 20
